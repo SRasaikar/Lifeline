@@ -203,9 +203,10 @@
         .heart {
             position: fixed;
             z-index: 4;
-            width: clamp(9rem, 24vw, 16rem);
+            width: clamp(11rem, 28vw, 20rem);
             aspect-ratio: 1;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             -webkit-mask-size: 100% 100%;
@@ -218,10 +219,11 @@
 
         .ambient-heart {
             position: fixed;
-            z-index: 1;
-            width: clamp(9rem, 22vw, 16rem);
+            z-index: 2;
+            width: clamp(11rem, 25vw, 19rem);
             aspect-ratio: 1;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             -webkit-mask-size: 100% 100%;
@@ -376,8 +378,8 @@
             const heart = document.createElement('img');
             heart.className = 'ambient-heart';
             heart.alt = '';
-            heart.style.left = `${Math.random() < .5 ? 7 + Math.random() * 18 : 75 + Math.random() * 18}%`;
-            heart.style.top = `${14 + Math.random() * 68}%`;
+            heart.style.left = `${Math.random() < .5 ? 4 + Math.random() * 23 : 73 + Math.random() * 23}%`;
+            heart.style.top = `${7 + Math.random() * 34}%`;
             heart.style.setProperty('--rotate', `${(Math.random() - .5) * 28}deg`);
             heart.style.setProperty('--ambient-duration', `${5.5 + Math.random() * 2}s`);
 
