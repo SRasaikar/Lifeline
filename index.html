@@ -216,7 +216,26 @@
             animation: float-heart var(--duration) cubic-bezier(.2,.7,.3,1) forwards;
         }
 
+        .ambient-heart {
+            position: fixed;
+            z-index: 1;
+            width: clamp(9rem, 22vw, 16rem);
+            aspect-ratio: 1;
+            object-fit: cover;
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            opacity: 0;
+            box-shadow: 0 .8rem 2rem rgba(0,0,0,.28);
+            animation: ambient-fade var(--ambient-duration) ease-in-out forwards;
+            pointer-events: none;
+        }
+
         .heart.fallback { background: #b5163e; }
+        .ambient-heart.fallback { background: #b5163e; }
 
         .status {
             position: absolute;
@@ -236,6 +255,10 @@
             0% { opacity: 0; transform: translate(-50%, -50%) scale(.1) rotate(-12deg); }
             12% { opacity: 1; }
             100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.08) rotate(var(--rotate)); }
+        }
+        @keyframes ambient-fade {
+            0%, 100% { opacity: 0; transform: scale(.82) rotate(var(--rotate)); }
+            20%, 72% { opacity: .78; transform: scale(1) rotate(var(--rotate)); }
         }
 
         @media (max-width: 520px) {
@@ -349,6 +372,43 @@
             }
         }
 
+        function spawnAmbientHeart(src) {
+            const heart = document.createElement('img');
+            heart.className = 'ambient-heart';
+            heart.alt = '';
+            heart.style.left = `${Math.random() < .5 ? 7 + Math.random() * 18 : 75 + Math.random() * 18}%`;
+            heart.style.top = `${14 + Math.random() * 68}%`;
+            heart.style.setProperty('--rotate', `${(Math.random() - .5) * 28}deg`);
+            heart.style.setProperty('--ambient-duration', `${5.5 + Math.random() * 2}s`);
+
+            const showHeart = () => {
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 8000);
+            };
+
+            if (src) {
+                heart.onload = showHeart;
+                heart.onerror = () => {
+                    heart.removeAttribute('src');
+                    heart.classList.add('fallback');
+                    showHeart();
+                };
+                heart.src = src;
+            } else {
+                heart.classList.add('fallback');
+                showHeart();
+            }
+        }
+
+        function beginAmbientPhase() {
+            let count = 0;
+            const ambientTimer = setInterval(() => {
+                spawnAmbientHeart(nextImage());
+                count += 1;
+                if (count === 8) clearInterval(ambientTimer);
+            }, 700);
+        }
+
         async function celebrate() {
             if (hasStarted) return;
             hasStarted = true;
@@ -366,7 +426,10 @@
             const burstTimer = setInterval(() => {
                 for (let count = 0; count < 2 + Math.floor(Math.random() * 3); count++) spawnHeart(nextImage());
                 burst += 1;
-                if (burst === 9) clearInterval(burstTimer);
+                if (burst === 9) {
+                    clearInterval(burstTimer);
+                    beginAmbientPhase();
+                }
             }, 360);
         }
 
