@@ -39,6 +39,83 @@
             background-size: 9px 9px;
         }
 
+        .password-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(190, 23, 64, .4), transparent 29rem),
+                linear-gradient(135deg, #22030d 0%, var(--wine) 50%, #20020b 100%);
+            transition: opacity .6s ease, visibility .6s ease;
+        }
+
+        .password-gate.unlocked {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .password-card {
+            width: min(100%, 25rem);
+            padding: clamp(2rem, 7vw, 3.5rem) 2rem 2.2rem;
+            border: 1px solid rgba(240, 184, 109, .55);
+            border-radius: 1rem;
+            background: rgba(65, 3, 19, .78);
+            box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .35);
+            text-align: center;
+        }
+
+        .password-card .eyebrow { margin-bottom: .7rem; }
+
+        .password-card h2 {
+            margin: 0;
+            color: var(--paper);
+            font: 400 clamp(2rem, 8vw, 3.3rem) "DM Serif Display", Georgia, serif;
+        }
+
+        .password-card p:not(.eyebrow) {
+            margin: .8rem 0 1.5rem;
+            color: rgba(255, 244, 237, .7);
+            font-size: .85rem;
+        }
+
+        .password-form { display: flex; gap: .6rem; }
+
+        .password-input {
+            min-width: 0;
+            flex: 1;
+            padding: .85rem 1rem;
+            border: 1px solid rgba(255, 244, 237, .25);
+            border-radius: .5rem;
+            color: var(--paper);
+            background: rgba(255, 255, 255, .08);
+            font: inherit;
+        }
+
+        .password-input:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+        .password-submit {
+            padding: .85rem 1rem;
+            border: 1px solid var(--gold);
+            border-radius: .5rem;
+            color: var(--paper);
+            background: var(--red);
+            font: 800 .72rem Manrope, sans-serif;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .password-error {
+            min-height: 1.2rem;
+            margin: .8rem 0 0;
+            color: #ff9a9b;
+            font-size: .75rem;
+        }
+
         .scene {
             position: relative;
             min-height: 100vh;
@@ -272,6 +349,18 @@
     </style>
 </head>
 <body>
+    <section class="password-gate" id="passwordGate">
+        <form class="password-card" id="passwordForm">
+            <p class="eyebrow">A little surprise</p>
+            <h2>For Vidushi</h2>
+            <p>Enter the secret word to open your rose garden.</p>
+            <div class="password-form">
+                <input class="password-input" id="passwordInput" type="password" autocomplete="off" placeholder="Secret word" aria-label="Secret word" required>
+                <button class="password-submit" type="submit">Open</button>
+            </div>
+            <p class="password-error" id="passwordError" aria-live="polite"></p>
+        </form>
+    </section>
     <svg class="heart-definitions" aria-hidden="true" width="0" height="0">
         <defs>
             <clipPath id="heart-clip" clipPathUnits="objectBoundingBox">
@@ -301,6 +390,7 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbySJk-5thQVRy_yzUSchLVTnii9UenFivDTXX_-7LJm9YsYq7Fzi_j2KvduBKadqHuN/exec";
+        const STATIC_PASSWORD = 'iamrose';
         let imageLinks = [];
         let hasStarted = false;
         let lastImage = -1;
@@ -456,6 +546,20 @@
         });
 
         const imagesReady = loadImages();
+
+        document.getElementById('passwordForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('passwordError');
+            if (input.value === STATIC_PASSWORD) {
+                document.getElementById('passwordGate').classList.add('unlocked');
+                error.textContent = '';
+                setTimeout(() => document.getElementById('passwordGate').remove(), 700);
+            } else {
+                error.textContent = 'That secret word is not quite right.';
+                input.select();
+            }
+        });
     </script>
 </body>
 </html>
