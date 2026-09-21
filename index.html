@@ -322,9 +322,10 @@
             setTimeout(() => heart.remove(), 5500);
         }
 
-        function celebrate() {
+        async function celebrate() {
             if (hasStarted) return;
             hasStarted = true;
+            await imagesReady;
             document.getElementById('message').classList.add('show');
             document.getElementById('intro').style.opacity = '0';
             document.getElementById('intro').style.transform = 'translateY(-1rem)';
@@ -352,7 +353,7 @@
             if (acceleration && Math.abs(acceleration.x || 0) + Math.abs(acceleration.y || 0) + Math.abs(acceleration.z || 0) > 35) celebrate();
         });
 
-        loadImages();
+        const imagesReady = loadImages();
     </script>
 </body>
 </html>
