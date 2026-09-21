@@ -281,7 +281,21 @@
             const values = Array.isArray(payload) ? payload :
                 payload?.images || payload?.links || payload?.urls || payload?.data || [];
             return values.map((item) => typeof item === 'string' ? item : item?.url || item?.link || item?.src)
-                .filter((url) => typeof url === 'string' && /^https?:\/\//i.test(url));
+                .filter((url) => typeof url === 'string' && /^https?:\/\//i.test(url))
+                .map((url) => {
+                    try {
+                        const parsed = new URL(url);
+                        const driveId = parsed.searchParams.get('id');
+                        if (parsed.hostname.endsWith('drive.google.com') && driveId) {
+                            return `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w800`;
+                        }
+                    } catch (error) {
+                        console.warn('Skipping malformed image URL:', url);
+                        return null;
+                    }
+                    return url;
+                })
+                .filter(Boolean);
         }
 
         async function loadImages() {
