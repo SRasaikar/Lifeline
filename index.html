@@ -497,18 +497,36 @@
         }
 
         function beginAmbientPhase() {
-            const positions = [
-                { left: 8, top: 9 }, { left: 24, top: 24 },
-                { left: 8, top: 38 }, { left: 25, top: 39 },
-                { left: 73, top: 10 }, { left: 89, top: 23 },
-                { left: 72, top: 37 }, { left: 89, top: 39 }
-            ].sort(() => Math.random() - .5);
-            let count = 0;
-            const ambientTimer = setInterval(() => {
-                spawnAmbientHeart(nextImage(), positions[count]);
-                count += 1;
-                if (count === 8) clearInterval(ambientTimer);
-            }, 700);
+            const ambientStartedAt = Date.now();
+            const ambientLimit = 60 * 60 * 1000;
+            let cycleTimer;
+            let staggerTimer;
+
+            function launchCycle() {
+                if (Date.now() - ambientStartedAt >= ambientLimit) return;
+                const positions = [
+                    { left: 8, top: 9 }, { left: 24, top: 24 },
+                    { left: 8, top: 38 }, { left: 25, top: 39 },
+                    { left: 73, top: 10 }, { left: 89, top: 23 },
+                    { left: 72, top: 37 }, { left: 89, top: 39 }
+                ].sort(() => Math.random() - .5);
+                let count = 0;
+                staggerTimer = setInterval(() => {
+                    if (count === positions.length || Date.now() - ambientStartedAt >= ambientLimit) {
+                        clearInterval(staggerTimer);
+                        return;
+                    }
+                    spawnAmbientHeart(nextImage(), positions[count]);
+                    count += 1;
+                }, 700);
+                cycleTimer = setTimeout(launchCycle, 6500);
+            }
+
+            launchCycle();
+            setTimeout(() => {
+                clearTimeout(cycleTimer);
+                clearInterval(staggerTimer);
+            }, ambientLimit);
         }
 
         async function celebrate() {
