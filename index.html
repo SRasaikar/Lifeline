@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #111; /* Dark background makes the images pop */
+            height: 100vh; 
+        }
+        .heart {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            /* Crops the image into a perfect heart */
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            opacity: 0;
+            /* Runs the 3D popping animation */
+            animation: popAndFly 4s ease-in forwards;
+        }
+        
+        @keyframes popAndFly {
+            0% { 
+                transform: scale(0.1) translate(0, 0); 
+                opacity: 0; 
+            }
+            15% { opacity: 1; }
+            100% { 
+                /* Scales up and moves to the coordinates defined by JS */
+                transform: scale(3) translate(var(--target-x), var(--target-y)); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbySJk-5thQVRy_yzUSchLVTnii9UenFivDTXX_-7LJm9YsYq7Fzi_j2KvduBKadqHuN/exec";
+    
+    async function initBirthdaySurprise() {
+        try {
+            const response = await fetch(WEB_APP_URL);
+            const images = await response.json();
+            
+            if(images.length === 0) return;
+            
+            // Spawn a new heart every 600 milliseconds
+            setInterval(() => {
+                const randomImg = images[Math.floor(Math.random() * images.length)];
+                spawnHeart(randomImg);
+            }, 600);
+        } catch (err) {
+            console.error("Failed to load images", err);
+        }
+    }
+
+    function spawnHeart(src) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'heart';
+        
+        // Calculate a random trajectory pushing outward from the center
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 300 + Math.random() * 200; // Travel distance
+        img.style.setProperty('--target-x', `${Math.cos(angle) * distance}px`);
+        img.style.setProperty('--target-y', `${Math.sin(angle) * distance}px`);
+        
+        // Start slightly randomized around the exact center
+        img.style.left = `calc(50% - 75px + ${(Math.random() - 0.5) * 50}px)`;
+        img.style.top = `calc(50% - 75px + ${(Math.random() - 0.5) * 50}px)`;
+
+        document.body.appendChild(img);
+        
+        // Remove the DOM element after the 4-second animation finishes
+        setTimeout(() => img.remove(), 4000);
+    }
+
+    // Start the loop
+    initBirthdaySurprise();
+</script>
+</body>
+</html>
