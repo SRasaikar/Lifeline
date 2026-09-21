@@ -309,17 +309,30 @@
             const heart = document.createElement('img');
             heart.className = 'heart';
             heart.alt = '';
-            if (src) heart.src = src;
-            else heart.classList.add('fallback');
             heart.style.left = `${35 + Math.random() * 30}%`;
             heart.style.top = `${45 + Math.random() * 12}%`;
             heart.style.setProperty('--x', `${(Math.random() - .5) * 130}vw`);
             heart.style.setProperty('--y', `${-35 - Math.random() * 75}vh`);
             heart.style.setProperty('--rotate', `${(Math.random() - .5) * 70}deg`);
             heart.style.setProperty('--duration', `${2.8 + Math.random() * 2.2}s`);
-            heart.onerror = () => { heart.removeAttribute('src'); heart.classList.add('fallback'); };
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5500);
+
+            const showHeart = () => {
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 6500);
+            };
+
+            if (src) {
+                heart.onload = showHeart;
+                heart.onerror = () => {
+                    heart.removeAttribute('src');
+                    heart.classList.add('fallback');
+                    showHeart();
+                };
+                heart.src = src;
+            } else {
+                heart.classList.add('fallback');
+                showHeart();
+            }
         }
 
         async function celebrate() {
